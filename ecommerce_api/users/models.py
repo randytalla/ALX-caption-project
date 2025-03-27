@@ -1,7 +1,6 @@
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
 
-# Custom User Manager
 class UserManager(BaseUserManager):
     def create_user(self, email, username, password=None, **extra_fields):
         """Create and return a regular user with email and password."""
@@ -11,19 +10,18 @@ class UserManager(BaseUserManager):
             raise ValueError('Username is required')
 
         email = self.normalize_email(email)
+        extra_fields.setdefault('is_active', True)  # Ensure user is active
         user = self.model(email=email, username=username, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
         return user
-
+    
     def create_superuser(self, email, username, password=None, **extra_fields):
         """Create and return a superuser."""
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
-
         return self.create_user(email, username, password, **extra_fields)
 
-# Custom User Model
 class User(AbstractBaseUser, PermissionsMixin):
     ROLE_CHOICES = [
         ('customer', 'Customer'),
@@ -38,7 +36,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
-    # Avoid conflicts with Django's default groups and permissions
+    # Groups and Permissions (default Django)
     groups = models.ManyToManyField(
         'auth.Group',
         related_name='custom_user_groups',
@@ -50,8 +48,10 @@ class User(AbstractBaseUser, PermissionsMixin):
         blank=True
     )
 
+    # User manager to handle custom creation methods
     objects = UserManager()
 
+    # Set `email` as the username field
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
 
