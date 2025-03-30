@@ -1,16 +1,21 @@
-from rest_framework import viewsets
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework import generics, filters
+from django_filters.rest_framework import DjangoFilterBackend
 from .models import Product
 from .serializers import ProductSerializer
 
-class ProductViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint for managing products.
-    - GET (list, retrieve)
-    - POST (create)
-    - PUT/PATCH (update)
-    - DELETE (delete)
-    """
-    queryset = Product.objects.all().order_by('-created_at')
+class ProductListView(generics.ListAPIView):
+    """API for listing and searching products"""
+    queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]  # Allow anyone to view, but only authenticated users to edit
+
+    # Add filtering, searching, and pagination
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    
+    # Search by product name or category (partial matches allowed)
+    search_fields = ['name', 'category']
+
+    # Filtering options
+    filterset_fields = ['category', 'price', 'stock_quantity']
+
+    # Ordering options (ascending/descending price)
+    ordering_fields = ['price', 'created_at']
