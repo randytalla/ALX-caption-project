@@ -3,6 +3,10 @@ from django_filters.rest_framework import DjangoFilterBackend
 from .models import Product
 from .serializers import ProductSerializer
 
+
+class ProductPagination(PageNumberPagination):
+    page_size = 5
+
 class ProductViewSet(viewsets.ModelViewSet):
     """API for CRUD operations on products"""
     queryset = Product.objects.all()
