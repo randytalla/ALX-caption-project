@@ -1,10 +1,10 @@
-from rest_framework import generics, filters
+from rest_framework import viewsets, filters
 from django_filters.rest_framework import DjangoFilterBackend
 from .models import Product
 from .serializers import ProductSerializer
 
-class ProductListView(generics.ListAPIView):
-    """API for listing and searching products"""
+class ProductViewSet(viewsets.ModelViewSet):
+    """API for CRUD operations on products"""
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
 
