@@ -23,6 +23,7 @@ Authentication: JWT via rest_framework_simplejwt
 Filtering: django-filter
 Pagination: DRF’s PageNumberPagination
 
+
 Prerequisites
 Python 3.8+
 pip (Python package manager)
